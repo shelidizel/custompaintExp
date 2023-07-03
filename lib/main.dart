@@ -4,17 +4,12 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyHomePage());
-  
 }
 
 
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, });
-
-  
-
-  
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -42,14 +37,14 @@ class _MyHomePageState extends State<MyHomePage> {
       onPointerHover: (event) {
         setState(() {
           hoverPositions.add(event.localPosition);
-        });
-          
-         
+        });  
       },
       child: CustomPaint(
         painter: DemoPainter(
-          hoverPositions: hoverPositions
+          hoverPositions: hoverPositions,
+          
         ),
+        size: Size(MediaQuery.of(context).size.height/2, MediaQuery.of(context).size.width/2),
         
       ),
     );
@@ -64,61 +59,47 @@ class DemoPainter extends CustomPainter {
   bool isArcHovered = false;
 
   @override
-  void paint(Canvas canvas, Size size, ) {
+void paint(Canvas canvas, Size size) {
+  Offset center = Offset(size.width / 2, size.height / 2);
+  var rect = Rect.fromCircle(center: center, radius: size.width / 4);
 
+  Path path = Path();
 
-    Offset center = Offset(size.width/2, size.height/2);
-    var rect = Rect.fromCenter(center: center, width: 200, height: 200);
-    
-    
-    
+  final radius = size.width / 4;
+  final startAngle = 0.0;
+  var endAngle = pi/4;
 
-   Path path = Path();
-     
-    
-    // Radius of the arc
-    final radius = size.width / 4;
+  path.addArc(rect, startAngle, endAngle);
 
-    // Start angle of the arc in radians
-    final startAngle = 0.0;
-
-    // End angle of the arc in radians
-    final endAngle = 1.4; // Example: Half circle (180 degrees)
-
-    // Add the arc to the path using arcTo
-    path.arcToPoint(
-      center,
-      radius: Radius.zero,
-      rotation: endAngle - startAngle,
-      clockwise: false,
-    );
-
-   if(hoverPositions.isNotEmpty){
-    print("hoverPostions id not empty");
-     for (var hoverPosition in hoverPositions) {
-       if(path.contains(hoverPosition)){
+  if(hoverPositions.isNotEmpty){
+    for (var hoverPosition in hoverPositions) {
+      if(path.contains(hoverPosition)){
+        print('Hover position within');
+        isArcHovered = true;
         hoverPositions.clear();
-        //path.arcTo(rect, 0.0, pi/1, true);
-        print("$hoverPosition I am in path.");
-       }
-     }
-    } else {
-      print('hoverpositions is empty');
+        
+      } else if (path.contains(hoverPosition) == false) {
+        print('hover position without');
+        isArcHovered = false;
+      }
     }
+    
+    
+  } 
 
-    Paint paint = Paint()..color = isArcHovered? Colors.blue : Colors.red;
-    canvas.drawPath(path, paint);
-    
-    
-  }
+
+
+  Paint paint = Paint()
+    ..color = isArcHovered? Colors.red.withOpacity(.7) : Colors.red
+    ..strokeWidth = 50
+    ..style = PaintingStyle.stroke;
+
+  canvas.drawPath(path, paint);
+}
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
   }
-  
-  
-
- 
 }
 
