@@ -33,20 +33,13 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     
-    return Listener(
-      onPointerHover: (event) {
-        setState(() {
-          hoverPositions.add(event.localPosition);
-        });  
-      },
-      child: CustomPaint(
-        painter: DemoPainter(
-          hoverPositions: hoverPositions,
-          
-        ),
-        size: Size(MediaQuery.of(context).size.height/2, MediaQuery.of(context).size.width/2),
+    return CustomPaint(
+      painter: DemoPainter(
+        hoverPositions: hoverPositions,
         
       ),
+      size: Size(MediaQuery.of(context).size.height/2, MediaQuery.of(context).size.width/2),
+      
     );
   }
 }
@@ -59,39 +52,31 @@ class DemoPainter extends CustomPainter {
   bool isArcHovered = false;
 
   @override
-void paint(Canvas canvas, Size size) {
-  Offset center = Offset(size.width / 2, size.height / 2);
-  var rect = Rect.fromCircle(center: center, radius: size.width / 4);
+  void paint(Canvas canvas, Size size) {
+//   Offset center = Offset(size.width / 2, size.height / 2);
+//   var rect = Rect.fromCircle(center: center, radius: size.width / 4);
 
   Path path = Path();
 
-  final radius = size.width / 4;
-  final startAngle = 0.0;
-  var endAngle = pi/4;
+  // final radius = size.width / 4;
+  // final startAngle = 0.0;
+  // var endAngle = pi/4;
 
-  path.addArc(rect, startAngle, endAngle);
+  // path.addArc(rect, startAngle, endAngle);
 
-  if(hoverPositions.isNotEmpty){
-    for (var hoverPosition in hoverPositions) {
-      if(path.contains(hoverPosition)){
-        print('Hover position within');
-        isArcHovered = true;
-        hoverPositions.clear();
-        
-      } else if (path.contains(hoverPosition) == false) {
-        print('hover position without');
-        isArcHovered = false;
-      }
-    }
-    
-    
-  } 
+  path.moveTo(size.width/2, size.height/2);
+  
+  //creates a parabola curve or something of that sort.
+  // path.conicTo(size.width/2 + 200, size.height/2 - 400, 
+  //              size.width/2 + 400, size.height/2 , .5);
+
+ 
 
 
 
   Paint paint = Paint()
-    ..color = isArcHovered? Colors.red.withOpacity(.7) : Colors.red
-    ..strokeWidth = 50
+    ..color = Colors.blue
+    ..strokeWidth = 5
     ..style = PaintingStyle.stroke;
 
   canvas.drawPath(path, paint);
