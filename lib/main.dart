@@ -82,12 +82,13 @@ class DemoPainter extends CustomPainter {
   // path.conicTo(size.width/2 + 200, size.height/2 - 400, 
   //              size.width/2 + 400, size.height/2 , .5);
 
-  path.cubicTo(bezierControlPntStart == null? size.width/2 + 100 : bezierControlPntStart!.dx, 
-               bezierControlPntStart == null? size.height/2 + 100 : bezierControlPntStart!.dy, 
-               bezierEndPoint == null? size.width/2 + 500 : bezierControlPntEnd!.dx,
-               bezierEndPoint == null? size.height/2 : bezierControlPntEnd!.dy,
-               bezierControlPntEnd  == null ? size.width/2 + 300 : bezierEndPoint!.dx, 
-               bezierControlPntEnd == null?  size.height/2 - 200 : bezierEndPoint!.dy
+  path.cubicTo(
+    bezierControlPntStart == null? size.width/2 + 100 : bezierControlPntStart!.dx, 
+    bezierControlPntStart == null? size.height/2 + 100 : bezierControlPntStart!.dy, 
+    bezierControlPntEnd == null? size.width/2 + 300 : bezierControlPntEnd!.dx,
+    bezierControlPntEnd == null? size.height/2 - 200 : bezierControlPntEnd!.dy,
+    bezierEndPoint  == null ? size.width/2 + 500 : bezierEndPoint!.dx, 
+    bezierEndPoint == null?  size.height/2 : bezierEndPoint!.dy
                );
 
  
@@ -104,13 +105,39 @@ class DemoPainter extends CustomPainter {
     ..style = PaintingStyle.fill;
 
   canvas.drawPath(path, paint);
-  canvas.drawRRect(rrect1, rectPaint);
-  canvas.drawRRect(rrect2, rectPaint);
+  
+  GestureDetector(
+    onTap: () {
+      print("kitaturamba");
+    },
+    child : CustomPaint(
+      painter: RectPainter(rectPaint, rrect1),
+    )
+    
+  );
 }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
+  }
+}
+
+
+class RectPainter extends CustomPainter {
+  final Paint rectPaint;
+  final RRect rrect1;
+
+  RectPainter(this.rectPaint, this.rrect1);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRRect(rrect1, rectPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }
 
