@@ -35,7 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
     
     return CustomPaint(
       painter: DemoPainter(
-        hoverPositions: hoverPositions,
+        
         
       ),
       size: Size(MediaQuery.of(context).size.height/2, MediaQuery.of(context).size.width/2),
@@ -46,15 +46,27 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class DemoPainter extends CustomPainter {
   
-  List<Offset> hoverPositions = [];
-  DemoPainter({required this.hoverPositions});
+  Offset? bezierControlPntStart;
+  Offset? bezierControlPntEnd;
+  Offset? bezierEndPoint;
+  DemoPainter({this.bezierControlPntEnd,
+               this.bezierControlPntStart,
+               this.bezierEndPoint});
 
   bool isArcHovered = false;
 
   @override
   void paint(Canvas canvas, Size size) {
-//   Offset center = Offset(size.width / 2, size.height / 2);
-//   var rect = Rect.fromCircle(center: center, radius: size.width / 4);
+
+ Offset? centerRec1 = bezierControlPntStart ?? Offset(size.width/2 + 100, size.height/2 + 100);
+ Offset? centerRec2 = bezierControlPntEnd ?? Offset(size.width/2 + 300, size.height/2 - 200);
+
+ var rect1 = Rect.fromCircle(center: centerRec1, radius: 10);
+ var rect2 = Rect.fromCircle(center: centerRec2, radius: 10);
+
+  var rrect1 = RRect.fromRectAndRadius(rect1, const Radius.circular(4));
+  var rrect2 = RRect.fromRectAndRadius(rect2, const Radius.circular(4));
+  
 
   Path path = Path();
 
@@ -65,10 +77,18 @@ class DemoPainter extends CustomPainter {
   // path.addArc(rect, startAngle, endAngle);
 
   path.moveTo(size.width/2, size.height/2);
-  
+
   //creates a parabola curve or something of that sort.
   // path.conicTo(size.width/2 + 200, size.height/2 - 400, 
   //              size.width/2 + 400, size.height/2 , .5);
+
+  path.cubicTo(bezierControlPntStart == null? size.width/2 + 100 : bezierControlPntStart!.dx, 
+               bezierControlPntStart == null? size.height/2 + 100 : bezierControlPntStart!.dy, 
+               bezierEndPoint == null? size.width/2 + 500 : bezierControlPntEnd!.dx,
+               bezierEndPoint == null? size.height/2 : bezierControlPntEnd!.dy,
+               bezierControlPntEnd  == null ? size.width/2 + 300 : bezierEndPoint!.dx, 
+               bezierControlPntEnd == null?  size.height/2 - 200 : bezierEndPoint!.dy
+               );
 
  
 
@@ -78,8 +98,14 @@ class DemoPainter extends CustomPainter {
     ..color = Colors.blue
     ..strokeWidth = 5
     ..style = PaintingStyle.stroke;
+  Paint rectPaint = Paint()
+    ..color = Colors.blue
+    ..strokeWidth = 5
+    ..style = PaintingStyle.fill;
 
   canvas.drawPath(path, paint);
+  canvas.drawRRect(rrect1, rectPaint);
+  canvas.drawRRect(rrect2, rectPaint);
 }
 
   @override
