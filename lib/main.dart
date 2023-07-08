@@ -1,4 +1,4 @@
-import 'dart:math';
+
 
 import 'package:flutter/material.dart';
 
@@ -17,15 +17,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  List<Offset> hoverPositions = [];
+  
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    hoverPositions.clear();
-    print('hover positions cleared');
-    super.initState();
-  }
+  
 
   
  
@@ -33,23 +27,25 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     
-    return CustomPaint(
-      painter: DemoPainter(
-        
-        
-      ),
-      size: Size(MediaQuery.of(context).size.height/2, MediaQuery.of(context).size.width/2),
-      
+    return Container(
+      width: 600,
+      height: 600,
+      decoration: BoxDecoration(
+        color: Colors.yellow ),
+      child: CustomPaint(
+        painter: BezierPainter(),
+        foregroundPainter: RectPainter(null, null),
+      )
     );
   }
 }
 
-class DemoPainter extends CustomPainter {
+class BezierPainter extends CustomPainter {
   
   Offset? bezierControlPntStart;
   Offset? bezierControlPntEnd;
   Offset? bezierEndPoint;
-  DemoPainter({this.bezierControlPntEnd,
+  BezierPainter({this.bezierControlPntEnd,
                this.bezierControlPntStart,
                this.bezierEndPoint});
 
@@ -58,14 +54,7 @@ class DemoPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
 
- Offset? centerRec1 = bezierControlPntStart ?? Offset(size.width/2 + 100, size.height/2 + 100);
- Offset? centerRec2 = bezierControlPntEnd ?? Offset(size.width/2 + 300, size.height/2 - 200);
-
- var rect1 = Rect.fromCircle(center: centerRec1, radius: 10);
- var rect2 = Rect.fromCircle(center: centerRec2, radius: 10);
-
-  var rrect1 = RRect.fromRectAndRadius(rect1, const Radius.circular(4));
-  var rrect2 = RRect.fromRectAndRadius(rect2, const Radius.circular(4));
+ 
   
 
   Path path = Path();
@@ -99,22 +88,11 @@ class DemoPainter extends CustomPainter {
     ..color = Colors.blue
     ..strokeWidth = 5
     ..style = PaintingStyle.stroke;
-  Paint rectPaint = Paint()
-    ..color = Colors.blue
-    ..strokeWidth = 5
-    ..style = PaintingStyle.fill;
+  
 
   canvas.drawPath(path, paint);
   
-  GestureDetector(
-    onTap: () {
-      print("kitaturamba");
-    },
-    child : CustomPaint(
-      painter: RectPainter(rectPaint, rrect1),
-    )
-    
-  );
+  
 }
 
   @override
@@ -125,14 +103,34 @@ class DemoPainter extends CustomPainter {
 
 
 class RectPainter extends CustomPainter {
-  final Paint rectPaint;
-  final RRect rrect1;
+  Offset? bezierControlPntStart;
+  Offset? bezierControlPntEnd;
 
-  RectPainter(this.rectPaint, this.rrect1);
+  RectPainter(this.bezierControlPntEnd, this.bezierControlPntStart);
+
+  
 
   @override
   void paint(Canvas canvas, Size size) {
+
+  Paint rectPaint = Paint()
+    ..color = Colors.blue
+    ..strokeWidth = 5
+    ..style = PaintingStyle.fill;
+
+
+  Offset? centerRec1 = bezierControlPntStart ?? Offset(size.width/2 + 100, size.height/2 + 100);
+  Offset? centerRec2 = bezierControlPntEnd ?? Offset(size.width/2 + 300, size.height/2 - 200);
+
+  var rect1 = Rect.fromCircle(center: centerRec1, radius: 10);
+  var rect2 = Rect.fromCircle(center: centerRec2, radius: 10);
+
+  var rrect1 = RRect.fromRectAndRadius(rect1, const Radius.circular(4));
+  var rrect2 = RRect.fromRectAndRadius(rect2, const Radius.circular(4));
+
     canvas.drawRRect(rrect1, rectPaint);
+    canvas.drawRRect(rrect2, rectPaint);
+    
   }
 
   @override
